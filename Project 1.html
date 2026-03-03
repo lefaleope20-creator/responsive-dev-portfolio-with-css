@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LefaDev · modern animated portfolio</title>
+  <!-- Font Awesome for subtle icons (optional but adds life) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: #f5f9ff;
+      color: #1e1e2f;
+      scroll-behavior: smooth;
+      line-height: 1.5;
+    }
+
+    /* modern scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eef2f6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2d3e50;
+      border-radius: 8px;
+    }
+
+    /* sticky navbar with blur */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 60px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04), 0 2px 6px rgba(0,20,40,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: padding 0.2s ease;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #121212, #2b3a55);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .logo i {
+      background: none;
+      -webkit-text-fill-color: #2b3a55; /* keep icon solid */
+      margin-right: 6px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #1e2b37;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: 0.2s ease;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: #2b3a55;
+      color: #0f1a24;
+    }
+
+    /* mobile menu toggle (hidden by default) */
+    .menu-toggle {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #1e2b37;
+    }
+
+    /* hero section — modern gradient + floating animation */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 80px 60px;
+      background: radial-gradient(circle at 80% 30%, rgba(200, 220, 250, 0.5), transparent 50%);
+    }
+
+    .hero-text {
+      max-width: 550px;
+      animation: fadeUp 1s ease;
+    }
+
+    .hero-text h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(145deg, #1f2a3a, #2c3e50);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      color: #33475b;
+      margin-bottom: 30px;
+      border-left: 5px solid #3a5670;
+      padding-left: 20px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: #1f2d3a;
+      color: white;
+      padding: 14px 34px;
+      border: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.25s;
+      box-shadow: 0 8px 18px rgba(20,40,60,0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: #11212e;
+      transform: scale(1.02) translateY(-3px);
+      box-shadow: 0 16px 25px rgba(0,20,50,0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #1f2d3a;
+      color: #1f2d3a;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      background: #1f2d3a;
+      color: white;
+    }
+
+    .hero-image {
+      animation: float 4s infinite ease-in-out;
+    }
+
+    .hero-image img {
+      max-width: 380px;
+      border-radius: 30px;
+      box-shadow: 0 40px 40px -20px rgba(0,20,40,0.3);
+      transition: 0.3s;
+    }
+
+    .hero-image img:hover {
+      transform: scale(1.02) rotate(1deg);
+    }
+
+    /* floating animation */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* features section with reveal on scroll (intersection observer fallback is smooth anyway) */
+    .features {
+      text-align: center;
+      padding: 80px 40px;
+      background: white;
+    }
+
+    .features h2 {
+      font-size: 2.6rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+    }
+
+    .features h2:after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: #2b3a55;
+      margin: 15px auto 0;
+      border-radius: 4px;
+    }
+
+    .feature-grid {
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+      margin-top: 50px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 30px 20px 30px 20px;
+      width: 280px;
+      border-radius: 30px;
+      box-shadow: 0 25px 40px -18px rgba(0,20,50,0.2);
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      border: 1px solid rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(90deg, #394e6b, #6f8fb2);
+    }
+
+    .card:hover {
+      transform: translateY(-16px) scale(1.02);
+      box-shadow: 0 40px 55px -18px #1a2f44;
+    }
+
+    .card i {
+      font-size: 2.8rem;
+      color: #2b3a55;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .card p {
+      color: #3f4f62;
+    }
+
+    /* counter / stats strip — adds technical interest */
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      background: #0d1b26;
+      color: white;
+      padding: 40px 20px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    /* CTA section */
+    .cta-banner {
+      background: linear-gradient(130deg, #1f3243, #263b4f);
+      color: white;
+      padding: 60px 30px;
+      text-align: center;
+      border-radius: 80px 20px 80px 20px;
+      margin: 60px 40px;
+      box-shadow: 0 30px 40px -20px #09161e;
+    }
+
+    .cta-banner h2 {
+      font-size: 2.4rem;
+      margin-bottom: 15px;
+    }
+
+    .cta-banner button {
+      background: white;
+      color: #1f3243;
+      border: none;
+      font-weight: 700;
+      padding: 16px 45px;
+      border-radius: 60px;
+      font-size: 1.2rem;
+      margin-top: 25px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+    }
+
+    .cta-banner button:hover {
+      background: #ecf5ff;
+      transform: scale(1.05);
+    }
+
+    /* footer */
+    .footer {
+      text-align: center;
+      padding: 35px 20px;
+      background: #0f1a22;
+      color: #ddd;
+      margin-top: 50px;
+    }
+
+    .footer a {
+      color: #99badd;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* mobile styles */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 16px 30px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        position: absolute;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 30px 0;
+        box-shadow: 0 30px 40px rgba(0,0,0,0.1);
+        transform: translateY(-150%);
+        opacity: 0;
+        transition: 0.3s ease;
+        pointer-events: none;
+        border-radius: 0 0 30px 30px;
+      }
+
+      .nav-links.show {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 50px 30px;
+        gap: 40px;
+      }
+
+      .hero-text p {
+        border-left: none;
+        padding-left: 0;
+      }
+
+      .btn-group {
+        justify-content: center;
+      }
+
+      .hero-image img {
+        max-width: 280px;
+      }
+
+      .feature-grid {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .stats {
+        flex-direction: column;
+      }
+
+      .cta-banner {
+        margin: 30px 20px;
+        padding: 40px 20px;
+      }
+    }
+
+    /* simple scroll reveal styling (adds fade for cards) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navbar with hamburger (mobile) -->
+  <header class="navbar">
+    <h2 class="logo"><i class="fas fa-code"></i> LefaDev</h2>
+    <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+    <nav class="nav-links" id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#features">Features</a>
+      <a href="#stats">Stats</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Hero with floating element -->
+  <section class="hero" id="home">
+    <div class="hero-text">
+      <h1>Build modern websites <br> with confidence</h1>
+      <p>I'm Lefa — front‑end explorer. I craft responsive, animated interfaces with HTML, CSS & a touch of JavaScript magic.</p>
+      <div class="btn-group">
+        <button class="btn-primary" onclick="alert('Thanks for your interest, let’s connect! 📬')"><i class="fas fa-rocket"></i> Get started</button>
+        <button class="btn-outline" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'});"><i class="fas fa-arrow-down"></i> Explore</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <!-- Using a placeholder with a modern abstract vibe — but we can also use gradient -->
+      <img src="https://via.placeholder.com/400x400/1f3243/ffffff?text=</>+Lefa" alt="Lefa hero avatar">
+    </div>
+  </section>
+
+  <!-- Features enhanced with icons + onscroll reveal (intersection observer) -->
+  <section class="features" id="features">
+    <h2>Why this page stands out</h2>
+    <div class="feature-grid">
+      <div class="card reveal">
+        <i class="fas fa-mobile-alt"></i>
+        <h3>Responsive</h3>
+        <p>Pixel‑perfect on any device – from foldables to 4K screens. Tested with love.</p>
+      </div>
+      <div class="card reveal">
+        <i class="fas fa-layer-group"></i>
+        <h3>Modern layout</h3>
+        <p>Flexbox, grid, and glassmorphism. Smooth micro‑interactions everywhere.</p>
+      </div>
+      <div class="card reveal">
+        <i class="fas fa-bolt"></i>
+        <h3>Lightning fast</h3>
+        <p>Pure HTML/CSS + minimal JS for that buttery 100/100 performance score.</p>
+      </div>
+      <div class="card reveal">
+        <i class="fas fa-palette"></i>
+        <h3>Animated vibe</h3>
+        <p>Floating hero, hover zooms, scroll reveals — feels alive yet professional.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats strip (shows fake but plausible metrics – adds realism) -->
+  <div class="stats" id="stats">
+    <div class="stat-item">
+      <div class="stat-number">14+</div>
+      <div class="stat-label">projects completed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">client satisfaction</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">3s</div>
+      <div class="stat-label">average load time</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">∞</div>
+      <div class="stat-label">passion</div>
+    </div>
+  </div>
+
+  <!-- CTA / contact teaser -->
+  <div class="cta-banner" id="contact">
+    <h2>Let’s create something memorable</h2>
+    <p>Whether it’s a portfolio, startup landing, or experimental UI — I’m ready.</p>
+    <button onclick="window.location.href='mailto:lefa@example.com'"><i class="fas fa-paper-plane"></i> lefa@dev.build</button>
+  </div>
+
+  <!-- Footer with signature -->
+  <footer class="footer">
+    <p>Made by <strong>Lefa Leope</strong> <i class="fas fa-heart" style="color: #f28b82;"></i> with HTML/CSS + interactions</p>
+    <p style="margin-top: 12px; font-size: 0.9rem;">
+      <a href="#home">Home</a> · <a href="#features">Features</a> · <a href="https://github.com/lefaleope20-creator ">GitHub</a> · <a href="https://www.linkedin.com/in/lefa-leope-05a143388/">LinkedIn</a>
+    </p>
+    <p style="margin-top: 20px; opacity: 0.6;">© 2025 LefaDev — built to impress</p>
+  </footer>
+
+  <!-- tiny script for mobile toggle + scroll reveal -->
+  <script>
+    (function() {
+      // mobile hamburger
+      const toggleBtn = document.getElementById('menuToggle');
+      const nav = document.getElementById('navLinks');
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          nav.classList.toggle('show');
+        });
+        // close on link click (optional)
+        document.querySelectorAll('.nav-links a').forEach(link => {
+          link.addEventListener('click', () => {
+            nav.classList.remove('show');
+          });
+        });
+      }
+
+      // Intersection Observer for reveal cards
+      const revealElements = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          }
+        });
+      }, { threshold: 0.2, rootMargin: '0px 0px -50px 0px' });
+
+      revealElements.forEach(el => observer.observe(el));
+
+      // smooth anchor links (just in case old browser)
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+    })();
+  </script>
+  <!-- tiny note: placeholder image from via.placeholder.com, but it's fine for demonstration -->
+</body>
+</html>
